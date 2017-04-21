@@ -2,6 +2,7 @@
 from PyQt4 import QtCore, QtGui
 from ui.main_win_ui import Ui_Landmark
 from utils import get_imgnames
+from os.path import expanduser, join
 
 
 __all__ = ["MainWin"]
@@ -18,6 +19,7 @@ class MainWin(QtGui.QMainWindow):
 
     def setup_connect(self):
         self.btnOpen.triggered.connect(self.file_dialog)
+        self.ui.nameList.clicked.connect(self.show_img)
 
     def init_toolbar(self):
         self.btnOpen = QtGui.QAction(QtGui.QIcon.fromTheme("folder-open"), "Open Folder", self)
@@ -36,10 +38,9 @@ class MainWin(QtGui.QMainWindow):
         self.ui.toolBar.addAction(self.btnUndo)
 
     def file_dialog(self):
-        from os.path import expanduser
         fd = QtGui.QFileDialog(self)
         self.pathname = fd.getExistingDirectory(caption="Open Folder",
-                                                directory=expanduser("~"))
+                                                directory=expanduser("~/Pictures/PhoenixOS"))
         # show all filenames in list
         self.imgnames = get_imgnames(self.pathname)
         model = QtGui.QStandardItemModel()
@@ -47,3 +48,12 @@ class MainWin(QtGui.QMainWindow):
             item = QtGui.QStandardItem(unicode(imgname))
             model.appendRow(item)
         self.ui.nameList.setModel(model)
+
+    def show_img(self, index):
+        cur_img = unicode(join(str(self.pathname), str(index.data().toString())))
+        scene = QtGui.QGraphicsScene()
+        pixmap = QtGui.QPixmap(cur_img)
+        img_width = self.ui.imgShow.size().width()
+        pixmap = pixmap.scaledToWidth(int(img_width) - 5)
+        scene.addPixmap(pixmap)
+        self.ui.imgShow.setScene(scene)
