@@ -2,7 +2,7 @@
 from PyQt4 import QtCore, QtGui
 from ui.main_win_ui import Ui_Landmark
 from utils import get_imgnames
-from os.path import expanduser, join
+from os.path import expanduser, join, isfile
 import json
 
 
@@ -17,6 +17,7 @@ class MainWin(QtGui.QMainWindow):
 
         self.init_toolbar()
         self.setup_connect()
+
         self.point_dict = {}
         self.point_rad = 3
         self.point_pen = QtGui.QPen(QtCore.Qt.red)
@@ -24,6 +25,8 @@ class MainWin(QtGui.QMainWindow):
 
     def setup_connect(self):
         self.btnOpen.triggered.connect(self.file_dialog)
+        self.btnClear.triggered.connect(self.rm_points)
+        self.btnSave.triggered.connect(self.save_points)
         self.ui.nameList.clicked.connect(self.show_img)
 
     def init_toolbar(self):
@@ -46,11 +49,17 @@ class MainWin(QtGui.QMainWindow):
         fd = QtGui.QFileDialog(self)
         self.pathname = fd.getExistingDirectory(caption="Open Folder",
                                                 directory=expanduser("~/Pictures/PhoenixOS"))
+        # load landmarks
+        self.json_file = join(str(self.pathname), "landmarks.json")
+        if isfile(self.json_file):
+            with open(self.json_file) as json_data:
+                self.point_dict = dict(json.load(json_data))
         # show all filenames in list
         self.imgnames = get_imgnames(self.pathname)
         model = QtGui.QStandardItemModel()
         for imgname in self.imgnames:
-            self.point_dict[unicode(imgname)] = []
+            if not unicode(imgname) in self.point_dict:
+                self.point_dict[unicode(imgname)] = []
             item = QtGui.QStandardItem(unicode(imgname))
             model.appendRow(item)
         self.ui.nameList.setModel(model)
@@ -58,30 +67,39 @@ class MainWin(QtGui.QMainWindow):
     def show_img(self, index):
         self.scene = QtGui.QGraphicsScene()
         self.ui.imgShow.setScene(self.scene)
+        # read image, scale to proper size
         self.cur_img = unicode(str(index.data().toString()))
         pixmap = QtGui.QPixmap(join(str(self.pathname), self.cur_img))
         img_width = self.ui.imgShow.size().width() - 5
-        self.dis_scale = float(pixmap.width()) / float(img_width)
-        pixmap = pixmap.scaledToWidth(img_width)
+        self.dis_scale = 1.0
+        if img_width < pixmap.width():
+            self.dis_scale = float(pixmap.width()) / float(img_width)
+            pixmap = pixmap.scaledToWidth(img_width)
         pixmap = QtGui.QGraphicsPixmapItem(pixmap, None, self.scene)
         # append existing point
         for item in self.point_dict[self.cur_img]:
-            self.scene.addEllipse(item[0] - self.point_rad, item[1] - self.point_rad,
+            self.scene.addEllipse(item[0] / self.dis_scale - self.point_rad,
+                                  item[1] / self.dis_scale - self.point_rad,
                                   self.point_rad * 2, self.point_rad * 2,
                                   self.point_pen)
-
+        # add mouse click event
         pixmap.mousePressEvent = self.point_select
 
     def point_select(self, event):
         point = event.pos()
-        self.point_dict[self.cur_img].append([point.x(), point.y()])
+        # print point.x(), point.y()
+        self.point_dict[self.cur_img].append([point.x() * self.dis_scale, \
+                                              point.y() * self.dis_scale])
         self.scene.addEllipse(point.x() - self.point_rad, point.y() - self.point_rad,
                               self.point_rad * 2, self.point_rad * 2,
                               self.point_pen)
 
     def save_points(self):
-        with open("landmarks.json", "wb") as f:
+        with open(self.json_file, "wb") as f:
             json.dump(self.point_dict, f)
+
+    def rm_points(self):
+        self.point_dict[self.cur_img] = []
 
     def closeEvent(self, event):
         self.save_points()
