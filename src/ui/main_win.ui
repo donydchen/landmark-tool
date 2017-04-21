@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>1000</width>
     <height>600</height>
    </rect>
   </property>
@@ -19,15 +19,15 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>781</width>
-      <height>521</height>
+      <width>980</width>
+      <height>520</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="3">
+     <item row="0" column="4">
       <widget class="QGraphicsView" name="imgShow"/>
      </item>
-     <item row="0" column="0" colspan="2">
+     <item row="0" column="0" colspan="3">
       <widget class="QListView" name="nameList"/>
      </item>
     </layout>
@@ -38,7 +38,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>1000</width>
      <height>25</height>
     </rect>
    </property>
