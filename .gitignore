@@ -93,3 +93,4 @@ ENV/
 
 # debian package
 pkg
+*.deb
