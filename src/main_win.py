@@ -22,12 +22,24 @@ class MainWin(QtGui.QMainWindow):
 
     def setup_connect(self):
         self.btnOpen.triggered.connect(self.file_dialog)
+        self.ui.actionOpen_Folder.triggered.connect(self.file_dialog)
         self.btnClear.triggered.connect(self.rm_points)
         self.btnSave.triggered.connect(self.dump_dict)
+        self.ui.actionSave_File.triggered.connect(self.dump_dict)
         self.btnUndo.triggered.connect(self.rm_last_point)
         self.ui.nameList.clicked.connect(self.show_img)
+        self.ui.actionExit.triggered.connect(self.close)
+
+    @QtCore.pyqtSlot()
+    def on_actionAbout_triggered(self):
+        QtGui.QMessageBox.about(None, "About Landmark Tool",
+            "<p align='center' style='font-size:16pt'><b>Landmark Tool</b>"
+            "is simple application that helps you to landmark images</p>"
+            "<p align='center' style='font-size:12pt'>Developed by <b>Donald</b>.</p>"
+            "<p align='center' style='font-size:12pt'>April 2017</p>")
 
     def init_toolbar(self):
+        self.ui.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
         self.btnOpen = QtGui.QAction(QtGui.QIcon.fromTheme("folder-open"), "Open Folder", self)
         self.ui.toolBar.addAction(self.btnOpen)
         self.btnSave = QtGui.QAction(QtGui.QIcon.fromTheme("document-save-as"),
@@ -37,11 +49,12 @@ class MainWin(QtGui.QMainWindow):
         self.ui.toolBar.addSeparator()
 
         self.btnClear = QtGui.QAction(QtGui.QIcon.fromTheme("edit-clear"),
-                                      "Clear all landmarks", self)
+                                      "Clear All", self)
         self.ui.toolBar.addAction(self.btnClear)
         self.btnUndo = QtGui.QAction(QtGui.QIcon.fromTheme("edit-undo"),
                                      "Undo", self)
         self.ui.toolBar.addAction(self.btnUndo)
+
 
     def file_dialog(self):
         # init all variables
