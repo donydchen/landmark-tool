@@ -18,4 +18,4 @@ cp -f ./src/ui/*.py ./pkg/$SRC_PATH/ui/
 cp -f ./src/image/icon.png ./pkg/$ICON_PATH/landmark-tool.png
 cp -f ./src/landmark-tool.desktop ./pkg/$APP_PATH/
 
-dpkg -b ./pkg landmark_tool_0.1.0_all.deb
+dpkg -b ./pkg landmark_tool_0.1.1_all.deb
