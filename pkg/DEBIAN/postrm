@@ -1,5 +1,0 @@
-#!/bin/sh
-
-BIN_PATH='/usr/bin'
-
-rm -f $BIN_PATH/landmark-tool

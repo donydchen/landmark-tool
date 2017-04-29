@@ -90,3 +90,6 @@ ENV/
 
 # Json file
 *.json
+
+# debian package
+pkg

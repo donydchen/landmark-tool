@@ -1,8 +1,0 @@
-Package: landmark-tool
-Version: 0.1.0
-Section: utils
-Priority: optional
-Maintainer: donald <ydchen@yahoo.com>
-Architecture: all
-Depends: python2.7, python-qt4
-Description: Landmark Tool is a simple application that helps you to landmark images

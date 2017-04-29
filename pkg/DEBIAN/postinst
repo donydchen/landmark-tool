@@ -1,6 +1,0 @@
-#!/bin/sh
-
-BIN_PATH='/usr/bin'
-SRC_PATH='/usr/share/landmark-tool'
-
-ln -s $SRC_PATH/landmark.py $BIN_PATH/landmark-tool
